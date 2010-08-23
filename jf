@@ -12,17 +12,32 @@ while ((my $field = shift)) {
 	push @fields, $field;
 }
 
+my $fieldtree = {};
+for my $field (@fields) {
+	my @nodes = split '/', $field;
+	my $tree = $fieldtree;
+	for my $node (@nodes) {
+		if (!exists($tree->{$node})) {
+			$tree->{$node} = {};
+		} 
+		$tree = $tree->{$node};
+	}
+}
+
 while (<>) {
-	print to_json(descend(from_json($_), @fields));
+	print to_json(descend(from_json($_), $fieldtree));
 }
 
 sub descend {
-	(my $json, my @fields) = @_;
+	(my $json, my $fields) = @_;
 	if (ref($json) =~ /ARRAY/) {
-		return [ map { descend($_, @fields) } @$json ];
-	} elsif (scalar(@fields) > 0) {
-		my $field = shift @fields;
-		return descend($json->{$field}, @fields);
+		return [ map { descend($_, $fields) } @$json ];
+	} elsif (scalar(keys %$fields) > 0) {
+		my %ret;
+		while ((my $field, my $subtree) = each %$fields) {
+			$ret{$field} = descend($json->{$field}, $subtree);
+		}
+		return \%ret;
 	} else {
 		return $json;
 	}
