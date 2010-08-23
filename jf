@@ -1,6 +1,12 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
+use warnings;
+use strict;
 use JSON;
+use Getopt::Std;
+
+my %opts;
+getopts('p', \%opts);
 
 $/ = undef;	# slurp whole files at a time
 
@@ -24,8 +30,14 @@ for my $field (@fields) {
 	}
 }
 
+my $json_handler = JSON->new;
 while (<>) {
-	print to_json(descend(from_json($_), $fieldtree));
+	my $wanted = descend($json_handler->decode($_), $fieldtree);
+	if ($opts{'p'}) {
+		print $json_handler->pretty->encode($wanted)."\n";
+	} else {
+		print $json_handler->encode($wanted)."\n";
+	}
 }
 
 sub descend {
