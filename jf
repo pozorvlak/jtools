@@ -1,0 +1,35 @@
+#!/usr/bin/perl -w
+
+use JSON;
+
+$/ = undef;	# slurp whole files at a time
+
+if (scalar(@ARGV) < 1) { usage() }
+
+my @fields;
+while ((my $field = shift)) {
+	if ($field eq '--') { last; }
+	push @fields, $field;
+}
+
+while (<>) {
+	print to_json(descend(from_json($_), @fields));
+}
+
+sub descend {
+	(my $json, my @fields) = @_;
+	if (ref($json) =~ /ARRAY/) {
+		return [ map { descend($_, @fields) } @$json ];
+	} elsif (scalar(@fields) > 0) {
+		my $field = shift @fields;
+		return descend($json->{$field}, @fields);
+	} else {
+		return $json;
+	}
+}
+
+sub usage {
+	print "Usage: $0 field1 field2 .. -- file1 file2 ..\n";
+	print "or cat file1 file2 .. | $0 field1 field2 ..\n";
+	exit 2;
+}

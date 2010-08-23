@@ -1,0 +1,10 @@
+#!/usr/bin/perl -w
+
+use JSON;
+use Data::Dumper;
+
+$/ = undef;
+
+while (<>) {
+	print Dumper(from_json($_));
+}
