@@ -1,0 +1,91 @@
+jtools - simple command-line utilities for working with JSON.
+
+
+INSTALLATION
+
+Install Makamaka Hannyaharamitu's JSON module from CPAN:
+
+$ cpan JSON
+
+Copy jd and jf to somewhere in your PATH:
+
+$ cp jd jf ~/bin
+
+That's it.
+
+USAGE
+
+Both jd and jf behave like standard Unix filters: they take text on standard
+input (or from files specified on the command-line), operate on it, and dump
+the result to standard output.
+
+jd simply pretty-prints its output:
+
+$ echo '{"nemeses":{"batman":"joker", "harry":"voldemort"}}' | jd
+{
+   "nemeses" : {
+      "batman" : "joker",
+      "harry" : "voldemort"
+   }
+}
+
+jf accepts a series of XPath-like field specifications, and returns only those
+parts of its input, preserving as much structure as necessary. With the -p
+option it will pretty-print its output.
+
+$ curl -s -upozorvlak:<my password here> http://api.twitter.com/1/statuses/mentions.json | jf -p user/name user/screen_name text
+[
+   {
+      "text" : "@pozorvlak I have to admit that if you have polymorphism then things like +. are particularly pointless.",
+      "user" : {
+         "name" : "Christopher Yocum",
+         "screen_name" : "cyocum"
+      }
+   },
+   {
+      "text" : "@pozorvlak Huh, I still like the safety that static typing gives you.",
+      "user" : {
+         "name" : "Christopher Yocum",
+         "screen_name" : "cyocum"
+      }
+   }
+... etc ...
+]
+
+Or from a file:
+
+jf -p user/name user/screen_name text -- one_I_prepared_earlier 
+[
+   {
+      "text" : "@pozorvlak I have to admit that if you have polymorphism then things like +. are particularly pointless.",
+      "user" : {
+         "name" : "Christopher Yocum",
+         "screen_name" : "cyocum"
+      }
+   },
+   {
+      "text" : "@pozorvlak Huh, I still like the safety that static typing gives you.",
+      "user" : {
+         "name" : "Christopher Yocum",
+         "screen_name" : "cyocum"
+      }
+   }
+... etc ...
+]
+
+COPYRIGHT AND LICENSE
+
+Copyright 2010 by Miles Gould.
+
+These programs are free software; you can redistribute and/or modify them under
+the same terms as Perl itself.
+
+CONTRIBUTING
+
+Please send bug reports and/or patches to miles@assyrian.org.uk. Or better yet,
+fork the project on GitHub! The URL's http://github.com/pozorvlak/jtools.
+
+UPDATES
+
+Any new versions will be announced on my blog:
+http://pozorvlak.livejournal.com/tag/jtools.
