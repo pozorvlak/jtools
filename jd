@@ -1,10 +1,9 @@
-#!/usr/bin/perl -w
+#!/usr/bin/perl
 
+use warnings;
+use strict;
 use JSON;
-use Data::Dumper;
 
-$/ = undef;
-
-while (<>) {
-	print Dumper(from_json($_));
-}
+local $/ = undef;
+my $json = JSON->new->allow_nonref;
+print $json->pretty->encode( $json->decode(<>) )."\n";
