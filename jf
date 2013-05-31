@@ -6,9 +6,11 @@ use JSON;
 use Getopt::Std;
 
 my %opts;
-getopts('p', \%opts);
+getopts('pl', \%opts);
 
-$/ = undef;	# slurp whole files at a time
+unless ($opts{l}) {
+    $/ = undef;	# slurp whole files at a time
+}
 
 if (scalar(@ARGV) < 1) { usage() }
 
@@ -30,6 +32,7 @@ for my $field (@fields) {
 	}
 }
 
+binmode STDOUT, ":utf8";
 my $json_handler = JSON->new;
 while (<>) {
 	my $wanted = descend($json_handler->decode($_), $fieldtree);
